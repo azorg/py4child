@@ -15,27 +15,13 @@
 n = int(input())
 nmax = 1000 # максимальный размер сдачи
 cnt = 0 # счеткик вариантов
-i1 = i2 = i5 = i10 = 0 # счетчики монет
-m1  = nmax
 m2  = nmax // 2
 m5  = nmax // 5
 m10 = nmax // 10
-m   = 0
-while True:
-    if m == n:
-        cnt += 1
-    i1 += 1
-    if i1 > m1:
-        i1 = 0
-        i2 += 1
-        if i2 > m2:
-            i2 = 0
-            i5 += 1
-            if i5 > m5:
-                i5 = 0
-                i10 += 1
-                if i10 > m10:
-                    break
-    m = i1 + i2 * 2 + i5 * 5 + i10 * 10
+for i2 in range(m2+1):
+    for i5 in range(m5+1):
+        for i10 in range(m10+1):
+            if i2 * 2 + i5 * 5 + i10 * 10 <= n:
+                cnt += 1
 print(cnt)
 

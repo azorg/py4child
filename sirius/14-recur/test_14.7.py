@@ -28,14 +28,19 @@
 Пример:
 n=3
 1 2 -1 3 1
+
+n=5
+
 """
 
-n = int(input())
-
 def prn(x):
+    """напечатать число без перевода строки"""
     print(x, "", end="")
+    global cnt
+    cnt += 1
 
 def erase(n):
+    """удалить все фишки с заполненных клеток с 1 до n включительно"""
     if n > 0:
         erase(n - 2)
         prn(-n)
@@ -43,15 +48,23 @@ def erase(n):
         erase(n - 1)
 
 def fill(n):
+    """установить фишки на пустые клетки с 1 до n включительно"""
     if n == 1:
         prn(1)
     elif n > 1:
-        fill(n - 1) 
+        fill(n - 1)
         erase(n - 2)
         prn(n)
         fill(n - 2) 
 
+n = int(input())
+
+cnt = 0 # число действий
+
 fill(n)
-print()
+
+print() # печать перевода строки
+
+#print("Общее число действий =", cnt)
 
 

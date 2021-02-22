@@ -14,7 +14,7 @@ NM = N * M
 K = 3
 
 # отладочная печать
-debug = True
+debug = False
 
 # игровое поле
 board = ['.'] * NM
@@ -193,7 +193,7 @@ def help(state):
 def take_input(player_token):
     """запрос воода пользователя"""
     while True:
-        player_answer = input("Куда поставим " + player_token + "? (h-помощь) ")
+        player_answer = input("Куда поставим " + player_token + " (h-помощь)? ")
         if player_answer == 'h' or \
            player_answer == 'H':
             help(board)
@@ -203,15 +203,14 @@ def take_input(player_token):
         except:
             print("Некорректный ввод. Вы уверены, что ввели число?")
             continue
-        if player_answer >= 1 and player_answer <= 9:
-        #if player_answer in range(1, 10):
+        if 1 <= player_answer <= NM:
             if (str(board[player_answer - 1]) not in "XO"):
                 board[player_answer - 1] = player_token
                 break
             else:
                 print("Эта клеточка уже занята")
         else:
-            print("Некорректный ввод. Введите число от 1 до 9 чтобы походить.")
+            print("Некорректный ввод. Введите число от 1 до %i чтобы походить." % NM)
 
 
 def main(board):
@@ -235,7 +234,7 @@ def main(board):
             if win:
                 print(win, "выиграл!")
                 break
-        if counter == 9:
+        if counter == NM:
             print("Ничья!")
             break
     draw_board(board)

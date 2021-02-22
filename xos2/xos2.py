@@ -14,7 +14,7 @@ NM = N * M
 K = 3
 
 # отладочная печать
-debug = True
+debug = False
 
 # игровое поле
 board = ['.'] * NM
@@ -148,7 +148,6 @@ def fill_tree(steps, tree):
 def help(state):
     """компьютерная помощь"""
     if debug: print("help():")
-    print("Подсказка (вероятность выиграть):")
     sym = 'X' if state.count('X') == state.count('O') else 'O' # чей ход?
     var = {}
     for i in range(NM):
@@ -158,26 +157,25 @@ def help(state):
             x = tree[tuple(nxt)][1]
             o = tree[tuple(nxt)][2]
             if sym == 'X':
-                F = 100 * x // (x + o)
+                d = x - o
             else:
-                F = 100 * o // (x + o)
+                d = o - x
             if debug:
                 print("  ", i + 1,
                       ": X=", tree[tuple(nxt)][1],
                        " O=", tree[tuple(nxt)][2],
-                       " F=", F, "%", sep='')
-            if F in var:
-                var[F].append(i + 1)
+                       " D=", d, sep='')
+            if d in var:
+                var[d].append(i + 1)
             else:
-                var[F] = [i + 1]
+                var[d] = [i + 1]
     if var:
-        print("  Рекомендованные ходы:")
+        print("Рекомендованные ходы:", sep='', end='')
         keys = list(var.keys())
         keys.sort(reverse=True)
-        for F in keys[:4:]:
-            print("     F=", F, "%: ", sep='', end='')
-            for i in var[F]:
-                print(i, " ", sep='', end='')
+        for d in keys[:1:]:
+            for i in var[d]:
+                print(" ", i, sep='', end='')
             print()
     else:
         print("  Рекомендаций НЕТ - ошибка в программе")

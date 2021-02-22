@@ -165,9 +165,11 @@ def help(state):
             n = tree[tuple(nxt)][3]
             # FIXME: magic!!!
             if sym == 'X':
-                d = 100 * (x - 2 * o + 2 * n) // (x + 2 * o + n)
+                #d = 100 * (x - 2 * o + 2 * n) // (x + 2 * o + n)
+                d = x - o + n
             else:
-                d = 100 * (o - 2 * x + 2 * n) // (2 * x + o + n)
+                #d = 100 * (o - 2 * x + 2 * n) // (2 * x + o + n)
+                d = o - x + n
             if debug:
                 print(i + 1,
                       ": X=", tree[tuple(nxt)][1],

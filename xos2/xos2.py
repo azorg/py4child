@@ -14,7 +14,7 @@ NM = N * M
 K = 3
 
 # отладочная печать
-debug = False
+debug = True
 
 # игровое поле
 board = ['.'] * NM
@@ -93,7 +93,8 @@ def build_tree():
               # [0] - кортедж возможных последующих состояний
               # [1] - число выигрышных веток 'X'
               # [2] - число выигрышных веток 'O'
-              # [3] - кто выиграл ('X' или 'O')
+              # [3] - число веток "в ничью"
+              # [4] - кто выиграл ('X' или 'O')
     steps = [ set([state]) ] # множество всевозможных состояний для каждого хода
     run = True
     cnt = 1 # счетчик ходов (1 - первый ход)
@@ -111,12 +112,15 @@ def build_tree():
                     else:
                         for ns in nxt:
                             steps[cnt].add(ns)
-                tree[state] = [ nxt, 0, 0, '' ]
+                if state.count('X') + state.count('O') == NM:
+                    tree[state] = [ nxt, 0, 0, 1, '' ] # ничья
+                else:
+                    tree[state] = [ nxt, 0, 0, 0, '' ]
             else: # выигрышное состояние
                 if win == 'X':
-                    tree[state] = [ (), 1, 0, win ] # выиграл 'X'
+                    tree[state] = [ (), 1, 0, 0, win ] # выиграл 'X'
                 else:
-                    tree[state] = [ (), 0, 1, win ] # выиграл '0'
+                    tree[state] = [ (), 0, 1, 0, win ] # выиграл '0'
         if debug:
             variants = len(steps[cnt]) if len(steps) - 1 >= cnt else 0
             if variants:
@@ -134,20 +138,22 @@ def fill_tree(steps, tree):
     cnt = len(steps) - 2
     while cnt >= 0: # идем в обратном порядке ходов
         for state in steps[cnt]:
-            x = o = 0
+            x = o = n = 0
             for nxt in tree[state][0]:
                 x += tree[nxt][1]
                 o += tree[nxt][2]
+                n += tree[nxt][3]
             tree[state][1] += x
             tree[state][2] += o
+            tree[state][3] += n
         cnt -= 1
     if debug:
         print("  x_cnt(0)=", tree[tuple(steps[0])[0]][1], sep='')
         print("  o_cnt(0)=", tree[tuple(steps[0])[0]][2], sep='')
+        print("  n_cnt(0)=", tree[tuple(steps[0])[0]][3], sep='')
 
 def help(state):
     """компьютерная помощь"""
-    if debug: print("help():")
     sym = 'X' if state.count('X') == state.count('O') else 'O' # чей ход?
     var = {}
     for i in range(NM):
@@ -156,14 +162,17 @@ def help(state):
             nxt[i] = sym
             x = tree[tuple(nxt)][1]
             o = tree[tuple(nxt)][2]
+            n = tree[tuple(nxt)][3]
+            # FIXME: magic!!!
             if sym == 'X':
-                d = x - o
+                d = 100 * (x - 2 * o + 2 * n) // (x + 2 * o + n)
             else:
-                d = o - x
+                d = 100 * (o - 2 * x + 2 * n) // (2 * x + o + n)
             if debug:
-                print("  ", i + 1,
+                print(i + 1,
                       ": X=", tree[tuple(nxt)][1],
                        " O=", tree[tuple(nxt)][2],
+                       " N=", tree[tuple(nxt)][3],
                        " D=", d, sep='')
             if d in var:
                 var[d].append(i + 1)

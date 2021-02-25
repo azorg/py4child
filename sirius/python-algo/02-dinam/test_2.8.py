@@ -54,22 +54,22 @@ Bi секунд, трёх билетов — Ci секунд.
     12
 """
 
-solve="""
-"""
-
 n = int(input())
-a = [0] * n
-b = [0] * n
-c = [0] * n
+abc = []
 for i in range(n):
-    a[i], b[i], c[i] = map(int, input().split())
+    abc.append(tuple(map(int, input().split())))
 
-t1 = t2 = t3
-for i in range(n):
-    t1, t2, t3 = \
-        
+t2 = t3 = 0
+t1 = abc[0][0] # a[0]
+if n > 1:
+    t2, t1 = t1, min(t1 + abc[1][0], # t1 + a[1]
+                     t2 + abc[0][1]) # t2 + b[0]
+for i in range(2, n):
+    t3, t2, t1 = \
+        t2, t1, min(t1 + abc[i][0],   # t1 + a[i]
+                    t2 + abc[i-1][1], # t2 + b[i-1]
+                    t3 + abc[i-2][2]) # t3 + c[i-2]
 
-#print(ans)
-
+print(t1)
 
 
